@@ -20,6 +20,7 @@ let gvocht = 0
 let mode = 0
 mode = 0
 let timer = 1
+radio.setGroup(255)
 basic.forever(function () {
     if (minode.DHTGetTemperature(ConnName.A0, DHTTemStyle.MINODE_DHT_CELSIUS) >= 30) {
         music.playTone(262, music.beat(BeatFraction.Whole))
@@ -53,7 +54,25 @@ basic.forever(function () {
             for (let index = 0; index < 1; index++) {
                 minode.FanControl_1(AnalogConnName.Analog_A0, 1)
                 basic.pause(200)
+                minode.FanControl_1(AnalogConnName.Analog_A0, 0)
             }
+        }
+        if (!(minode.switchIsOpened(ConnName.A0))) {
+            for (let index = 0; index < 1; index++) {
+                minode.FanControl_1(AnalogConnName.Analog_A0, -1)
+                basic.pause(200)
+                minode.FanControl_1(AnalogConnName.Analog_A0, 0)
+            }
+        }
+    }
+})
+basic.forever(function () {
+    if (!((0 as any) == (3 as any))) {
+        if (minode.switchIsOpened(ConnName.A0)) {
+            radio.sendNumber(minode.DHTGetTemperature(ConnName.A0, DHTTemStyle.MINODE_DHT_CELSIUS))
+            radio.sendNumber(minode.LightSensorGetLevel(AnalogConnName.Analog_A0))
+            radio.sendNumber(minode.DHTGetHumidity(ConnName.A0))
+            radio.sendNumber(gvocht)
         }
     }
 })
