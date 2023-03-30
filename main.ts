@@ -49,7 +49,7 @@ basic.forever(function () {
         if (mode2 >= 4) {
             mode2 = 0
             basic.clearScreen()
-            basic.showNumber(mode)
+            basic.showNumber(mode2)
             basic.pause(1000)
             basic.clearScreen()
         }
@@ -98,13 +98,18 @@ basic.forever(function () {
 basic.forever(function () {
     if (!((0 as any) == (3 as any))) {
         if (minode.switchIsOpened(ConnName.A0)) {
-            if (true) {
-            	
+            if (0 == 0) {
+                radio.sendNumber(minode.DHTGetTemperature(ConnName.A0, DHTTemStyle.MINODE_DHT_CELSIUS))
             }
-            radio.sendNumber(minode.DHTGetTemperature(ConnName.A0, DHTTemStyle.MINODE_DHT_CELSIUS))
-            radio.sendNumber(minode.LightSensorGetLevel(AnalogConnName.Analog_A0))
-            radio.sendNumber(minode.DHTGetHumidity(ConnName.A0))
-            radio.sendNumber(gvocht)
+            if ((0 as any) == (1 as any)) {
+                radio.sendNumber(minode.LightSensorGetLevel(AnalogConnName.Analog_A0))
+            }
+            if ((0 as any) == (2 as any)) {
+                radio.sendNumber(minode.DHTGetHumidity(ConnName.A0))
+            }
+            if ((0 as any) == (3 as any)) {
+                radio.sendNumber(gvocht)
+            }
         }
     }
 })
@@ -122,9 +127,9 @@ basic.forever(function () {
         if (timer == 1 && minode.LightSensorGetLevel(AnalogConnName.Analog_A2) <= 3) {
             minode.RGBSetColor(
             ConnName.D14,
+            90,
             0,
-            0,
-            100
+            10
             )
         } else {
             minode.RGBSetColor(
