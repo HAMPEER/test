@@ -1,9 +1,17 @@
 input.onButtonPressed(Button.A, function () {
-    basic.clearScreen()
-    mode += 1
-    basic.showNumber(mode)
-    basic.pause(1000)
-    basic.clearScreen()
+    if (!(minode.switchIsOpened(ConnName.A0))) {
+        basic.clearScreen()
+        mode += 1
+        basic.showNumber(mode)
+        basic.pause(1000)
+        basic.clearScreen()
+    } else {
+        basic.clearScreen()
+        mode2 += 1
+        basic.showNumber(mode)
+        basic.pause(1000)
+        basic.clearScreen()
+    }
 })
 input.onButtonPressed(Button.B, function () {
     while (!(input.buttonIsPressed(Button.A))) {
@@ -18,12 +26,33 @@ input.onButtonPressed(Button.B, function () {
 })
 let gvocht = 0
 let mode = 0
+let mode2 = 0
 mode = 0
 let timer = 1
 radio.setGroup(255)
+radio.setTransmitPower(7)
 basic.forever(function () {
     if (minode.DHTGetTemperature(ConnName.A0, DHTTemStyle.MINODE_DHT_CELSIUS) >= 30) {
         music.playTone(262, music.beat(BeatFraction.Whole))
+    }
+})
+basic.forever(function () {
+    if (!(minode.switchIsOpened(ConnName.A0))) {
+        if (mode >= 4) {
+            mode = 0
+            basic.clearScreen()
+            basic.showNumber(mode)
+            basic.pause(1000)
+            basic.clearScreen()
+        }
+    } else {
+        if (mode2 >= 4) {
+            mode2 = 0
+            basic.clearScreen()
+            basic.showNumber(mode)
+            basic.pause(1000)
+            basic.clearScreen()
+        }
     }
 })
 basic.forever(function () {
@@ -69,20 +98,14 @@ basic.forever(function () {
 basic.forever(function () {
     if (!((0 as any) == (3 as any))) {
         if (minode.switchIsOpened(ConnName.A0)) {
+            if (true) {
+            	
+            }
             radio.sendNumber(minode.DHTGetTemperature(ConnName.A0, DHTTemStyle.MINODE_DHT_CELSIUS))
             radio.sendNumber(minode.LightSensorGetLevel(AnalogConnName.Analog_A0))
             radio.sendNumber(minode.DHTGetHumidity(ConnName.A0))
             radio.sendNumber(gvocht)
         }
-    }
-})
-basic.forever(function () {
-    if (mode >= 4) {
-        mode = 0
-        basic.clearScreen()
-        basic.showNumber(mode)
-        basic.pause(1000)
-        basic.clearScreen()
     }
 })
 basic.forever(function () {
