@@ -1,32 +1,51 @@
 input.onButtonPressed(Button.A, function () {
     if (!(minode.switchIsOpened(ConnName.A0))) {
-        basic.clearScreen()
-        mode += 1
-        basic.showNumber(mode)
-        basic.pause(1000)
-        basic.clearScreen()
+        if (mode >= 4) {
+            basic.clearScreen()
+            mode = 0
+            basic.clearScreen()
+            basic.showNumber(mode)
+            basic.pause(1000)
+            basic.clearScreen()
+        } else {
+            basic.clearScreen()
+            mode += 1
+            basic.showNumber(mode)
+            basic.pause(1000)
+            basic.clearScreen()
+        }
     } else {
-        basic.clearScreen()
-        mode2 += 1
-        basic.showNumber(mode)
-        basic.pause(1000)
-        basic.clearScreen()
+        if (mode2 >= 1) {
+            mode2 = 0
+            basic.clearScreen()
+            basic.showNumber(mode2)
+            radio.sendNumber(mode2)
+            basic.pause(1000)
+            basic.clearScreen()
+        } else {
+            basic.clearScreen()
+            mode2 += 1
+            basic.showNumber(mode2)
+            radio.sendNumber(mode2)
+            basic.pause(1000)
+            basic.clearScreen()
+        }
     }
 })
 input.onButtonPressed(Button.B, function () {
-    while (!(input.buttonIsPressed(Button.A))) {
+    for (let index = 0; index < 1; index++) {
         basic.clearScreen()
         basic.showNumber(minode.DHTGetTemperature(ConnName.D13, DHTTemStyle.MINODE_DHT_CELSIUS))
         basic.pause(1000)
         basic.showNumber(minode.LightSensorGetLevel(AnalogConnName.Analog_A2))
         basic.pause(1000)
-        basic.showNumber(minode.DHTGetHumidity(ConnName.A0))
+        basic.showNumber(minode.DHTGetHumidity(ConnName.D13))
         basic.pause(1000)
     }
 })
-let gvocht = 0
 let mode = 0
 let mode2 = 0
+mode2 = 0
 mode = 0
 let timer = 1
 radio.setGroup(255)
@@ -37,94 +56,26 @@ basic.forever(function () {
     }
 })
 basic.forever(function () {
-    if (!(minode.switchIsOpened(ConnName.A0))) {
-        if (mode >= 4) {
-            mode = 0
-            basic.clearScreen()
-            basic.showNumber(mode)
-            basic.pause(1000)
-            basic.clearScreen()
-        }
+    if (mode2 == 0) {
+        radio.sendNumber(minode.DHTGetTemperature(ConnName.D13, DHTTemStyle.MINODE_DHT_CELSIUS))
     } else {
-        if (mode2 >= 4) {
-            mode2 = 0
-            basic.clearScreen()
-            basic.showNumber(mode2)
-            basic.pause(1000)
-            basic.clearScreen()
-        }
-    }
-})
-basic.forever(function () {
-    if (mode == 0) {
-        if (gvocht >= 1000) {
-            for (let index = 0; index < 1; index++) {
-                minode.FanControl_1(AnalogConnName.Analog_A0, 1)
-                basic.pause(200)
-                minode.FanControl_1(AnalogConnName.Analog_A0, 0)
-            }
-        } else if (gvocht < 1000) {
-            for (let index = 0; index < 1; index++) {
-                minode.FanControl_1(AnalogConnName.Analog_A0, -1)
-                basic.pause(200)
-                minode.FanControl_1(AnalogConnName.Analog_A0, 0)
-            }
-        }
-    }
-})
-basic.forever(function () {
-    pins.analogWritePin(AnalogPin.P1, 1023)
-    gvocht = pins.analogReadPin(AnalogPin.P0)
-    pins.analogWritePin(AnalogPin.P1, 1023)
-})
-basic.forever(function () {
-    if (mode == 3) {
-        if (minode.switchIsOpened(ConnName.A0)) {
-            for (let index = 0; index < 1; index++) {
-                minode.FanControl_1(AnalogConnName.Analog_A0, 1)
-                basic.pause(200)
-                minode.FanControl_1(AnalogConnName.Analog_A0, 0)
-            }
-        }
-        if (!(minode.switchIsOpened(ConnName.A0))) {
-            for (let index = 0; index < 1; index++) {
-                minode.FanControl_1(AnalogConnName.Analog_A0, -1)
-                basic.pause(200)
-                minode.FanControl_1(AnalogConnName.Analog_A0, 0)
-            }
-        }
-    }
-})
-basic.forever(function () {
-    if (!((0 as any) == (3 as any))) {
-        if (minode.switchIsOpened(ConnName.A0)) {
-            if (0 == 0) {
-                radio.sendNumber(minode.DHTGetTemperature(ConnName.A0, DHTTemStyle.MINODE_DHT_CELSIUS))
-            }
-            if ((0 as any) == (1 as any)) {
-                radio.sendNumber(minode.LightSensorGetLevel(AnalogConnName.Analog_A0))
-            }
-            if ((0 as any) == (2 as any)) {
-                radio.sendNumber(minode.DHTGetHumidity(ConnName.A0))
-            }
-            if ((0 as any) == (3 as any)) {
-                radio.sendNumber(gvocht)
-            }
-        }
+        radio.sendNumber(minode.DHTGetHumidity(ConnName.D13))
     }
 })
 basic.forever(function () {
     if (mode == 0) {
         if (minode.DHTGetTemperature(ConnName.D13, DHTTemStyle.MINODE_DHT_CELSIUS) >= 27) {
-            minode.FanControl_1(AnalogConnName.Analog_A0, 100)
+            minode.FanControl_1(AnalogConnName.Analog_A1, 100)
         } else {
-            minode.FanControl_1(AnalogConnName.Analog_A0, 0)
+            minode.FanControl_1(AnalogConnName.Analog_A1, 0)
         }
+    } else {
+        minode.FanControl_1(AnalogConnName.Analog_A1, 0)
     }
 })
 basic.forever(function () {
     if (mode == 0) {
-        if (timer == 1 && minode.LightSensorGetLevel(AnalogConnName.Analog_A2) <= 3) {
+        if (timer == 1 && minode.LightSensorGetLevel(AnalogConnName.Analog_A2) >= 3) {
             minode.RGBSetColor(
             ConnName.D14,
             90,
@@ -139,6 +90,13 @@ basic.forever(function () {
             0
             )
         }
+    } else {
+        minode.RGBSetColor(
+        ConnName.D14,
+        0,
+        0,
+        0
+        )
     }
 })
 basic.forever(function () {
