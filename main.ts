@@ -41,20 +41,19 @@ input.onButtonPressed(Button.B, function () {
         basic.pause(1000)
         basic.showNumber(minode.DHTGetHumidity(ConnName.D13))
         basic.pause(1000)
+        basic.showNumber(co2)
+        basic.pause(1000)
     }
 })
+let co2 = 0
 let mode = 0
 let mode2 = 0
+pins.setPull(DigitalPin.P0, PinPullMode.PullNone)
 mode2 = 0
 mode = 0
 let timer = 1
 radio.setGroup(255)
 radio.setTransmitPower(7)
-basic.forever(function () {
-    if (minode.DHTGetTemperature(ConnName.A0, DHTTemStyle.MINODE_DHT_CELSIUS) >= 30) {
-        music.playTone(262, music.beat(BeatFraction.Whole))
-    }
-})
 basic.forever(function () {
     if (mode2 == 0) {
         radio.sendNumber(minode.DHTGetTemperature(ConnName.D13, DHTTemStyle.MINODE_DHT_CELSIUS))
@@ -64,14 +63,24 @@ basic.forever(function () {
 })
 basic.forever(function () {
     if (mode == 0) {
-        if (minode.DHTGetTemperature(ConnName.D13, DHTTemStyle.MINODE_DHT_CELSIUS) >= 27) {
+        if (minode.DHTGetTemperature(ConnName.D13, DHTTemStyle.MINODE_DHT_CELSIUS) >= 26) {
             minode.FanControl_1(AnalogConnName.Analog_A1, 100)
         } else {
-            minode.FanControl_1(AnalogConnName.Analog_A1, 0)
+            minode.FanControl_1(AnalogConnName.Analog_A1, 50)
         }
-    } else {
-        minode.FanControl_1(AnalogConnName.Analog_A1, 0)
+    } else if (mode != 0) {
+        minode.FanControl_1(AnalogConnName.Analog_A1, 50)
     }
+})
+basic.forever(function () {
+    co2 = pins.analogReadPin(AnalogPin.P0) * 3
+    co2 = co2 - 500
+})
+basic.forever(function () {
+    timer = 1
+    basic.pause(16000)
+    timer = 0
+    basic.pause(8000)
 })
 basic.forever(function () {
     if (mode == 0) {
@@ -98,10 +107,4 @@ basic.forever(function () {
         0
         )
     }
-})
-basic.forever(function () {
-    timer = 1
-    basic.pause(16000)
-    timer = 0
-    basic.pause(8000)
 })
