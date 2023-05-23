@@ -45,6 +45,7 @@ input.onButtonPressed(Button.B, function () {
         basic.pause(1000)
     }
 })
+let raam = 0
 let co2 = 0
 let mode = 0
 let mode2 = 0
@@ -73,8 +74,14 @@ basic.forever(function () {
     }
 })
 basic.forever(function () {
+    if (co2 >= 800) {
+        raam = 1
+    } else {
+        raam = 0
+    }
+})
+basic.forever(function () {
     co2 = pins.analogReadPin(AnalogPin.P0) * 3
-    co2 = co2 - 500
 })
 basic.forever(function () {
     timer = 1
