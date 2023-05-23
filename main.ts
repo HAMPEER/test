@@ -85,9 +85,9 @@ basic.forever(function () {
 })
 basic.forever(function () {
     timer = 1
-    basic.pause(16000)
+    basic.pause(15000)
     timer = 0
-    basic.pause(8000)
+    basic.pause(9000)
 })
 basic.forever(function () {
     if (mode == 0) {
